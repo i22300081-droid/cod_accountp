@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>CP CLICKER</title>
+
+<style>
+*{
+ box-sizing:border-box;
+ -webkit-tap-highlight-color:transparent;
+}
+html,body{
+ margin:0;
+ min-height:100%;
+ font-family:Tahoma,Arial,sans-serif;
+ background:
+ radial-gradient(circle at 50% -10%,rgba(255,210,60,.09),transparent 35%),
+ #080a0d;
+ color:#fff;
+}
+body{padding-bottom:88px}
+button,input{font:inherit}
+button{border:0;cursor:pointer}
+.app{
+ width:100%;
+ max-width:560px;
+ margin:auto;
+ padding:16px;
+}
+.page{display:none;animation:pageIn .22s ease}
+.page.active{display:block}
+@keyframes pageIn{
+ from{opacity:0;transform:translateY(8px)}
+ to{opacity:1;transform:translateY(0)}
+}
+
+.top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:14px;
+}
+.brand{
+ font-weight:1000;
+ letter-spacing:1px;
+}
+.brand span{color:#ffd43b}
+.player-mini{
+ padding:8px 12px;
+ border:1px solid rgba(255,255,255,.1);
+ background:rgba(255,255,255,.045);
+ border-radius:14px;
+ font-size:12px;
+ color:#aaa;
+}
+
+.card{
+ background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+ border:1px solid rgba(255,255,255,.09);
+ box-shadow:0 18px 45px rgba(0,0,0,.25);
+ border-radius:24px;
+ padding:18px;
+ margin-bottom:14px;
+ backdrop-filter:blur(15px);
+}
+.title{
+ font-size:22px;
+ font-weight:1000;
+ margin-bottom:5px;
+}
+.sub{
+ color:#92969e;
+ font-size:12px;
+ line-height:1.8;
+}
+
+.balance{
+ text-align:center;
+ padding:24px 15px;
+}
+.balance-label{color:#999;font-size:12px}
+.balance-number{
+ font-size:42px;
+ font-weight:1000;
+ color:#ffd43b;
+ margin:8px 0;
+ text-shadow:0 0 25px rgba(255,212,59,.18);
+}
+.balance-cp{font-size:13px;color:#aaa}
+
+.click-wrap{
+ display:flex;
+ justify-content:center;
+ padding:18px 0 22px;
+}
+.click-btn{
+ width:190px;
+ height:190px;
+ border-radius:50%;
+ background:
+ radial-gradient(circle at 35% 30%,#fff5b0 0%,#ffd43b 24%,#b87d00 67%,#3b2900 100%);
+ border:8px solid rgba(255,255,255,.12);
+ box-shadow:
+ 0 0 0 7px rgba(255,212,59,.05),
+ 0 0 60px rgba(255,212,59,.16),
+ inset 0 0 30px rgba(0,0,0,.35);
+ color:#17120a;
+ font-size:32px;
+ font-weight:1000;
+ transition:.12s;
+}
+.click-btn:active{transform:scale(.94)}
+.click-btn:disabled{cursor:not-allowed;filter:saturate(.7) brightness(.72);opacity:.78}
+.click-btn.cooldown{animation:cooldownPulse 1s ease-in-out}
+@keyframes cooldownPulse{0%{transform:scale(.94)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+.click-btn:disabled{cursor:not-allowed;filter:saturate(.7) brightness(.72);opacity:.78}
+.click-btn.cooldown{animation:cooldownPulse 1s ease-in-out}
+@keyframes cooldownPulse{0%{transform:scale(.94)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+.click-btn small{
+ display:block;
+ font-size:11px;
+ margin-top:6px;
+ opacity:.65;
+}
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:9px;
+}
+.stat{
+ background:rgba(255,255,255,.035);
+ border:1px solid rgba(255,255,255,.07);
+ border-radius:17px;
+ padding:13px 7px;
+ text-align:center;
+}
+.stat b{
+ display:block;
+ font-size:17px;
+ margin-bottom:4px;
+}
+.stat span{font-size:10px;color:#888}
+
+.progress{
+ height:8px;
+ background:#191c21;
+ border-radius:20px;
+ overflow:hidden;
+ margin-top:10px;
+}
+.progress i{
+ display:block;
+ height:100%;
+ width:0%;
+ background:linear-gradient(90deg,#ffd43b,#fff0a1);
+ border-radius:20px;
+ transition:.3s;
+}
+
+.section-head{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:12px;
+}
+.section-head h2{
+ margin:0;
+ font-size:18px;
+}
+.count{
+ color:#ffd43b;
+ font-size:11px;
+}
+
+.reward{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:14px;
+ margin-bottom:9px;
+ border-radius:18px;
+ background:rgba(255,255,255,.035);
+ border:1px solid rgba(255,255,255,.07);
+}
+.reward-icon{
+ width:45px;height:45px;
+ border-radius:14px;
+ display:grid;
+ place-items:center;
+ background:rgba(255,212,59,.08);
+ color:#ffd43b;
+ font-size:21px;
+}
+.reward-info{flex:1}
+.reward-info b{display:block;font-size:13px}
+.reward-info span{display:block;color:#888;font-size:10px;margin-top:4px}
+.action{
+ padding:10px 14px;
+ border-radius:13px;
+ font-weight:900;
+ font-size:11px;
+ background:#24272d;
+ color:#fff;
+}
+.action.yellow{
+ background:#ffd43b;
+ color:#15120a;
+}
+.action:disabled{
+ opacity:.35;
+ cursor:not-allowed;
+}
+
+.shop-grid,.collection-grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:10px;
+}
+.shop-item,.collection-item{
+ position:relative;
+ overflow:hidden;
+ background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.02));
+ border:1px solid rgba(255,255,255,.08);
+ border-radius:22px;
+ padding:13px;
+ text-align:center;
+}
+.shop-item b,.collection-item .badge-name{
+ display:block;
+ font-size:13px;
+ margin-top:8px;
+ font-weight:1000;
+}
+.price{
+ color:#ffd43b;
+ font-size:11px;
+ margin:6px 0 9px;
+}
+.shop-item button,.collection-item button{
+ width:100%;
+}
+
+.badge-preview{
+ height:130px;
+ position:relative;
+ display:grid;
+ place-items:center;
+ overflow:hidden;
+ border-radius:18px;
+ background:radial-gradient(circle,rgba(255,255,255,.07),transparent 65%);
+}
+.badge-halo{
+ position:absolute;
+ width:100px;height:100px;
+ border-radius:50%;
+ filter:blur(18px);
+ opacity:.35;
+}
+.badge-ring-outer{
+ position:absolute;
+ width:92px;height:92px;
+ border-radius:50%;
+ border:2px solid rgba(255,255,255,.2);
+ transform:rotate(25deg);
+}
+.badge-plate{
+ position:absolute;
+ width:70px;height:70px;
+ transform:rotate(45deg);
+ border-radius:15px;
+ border:2px solid rgba(255,255,255,.35);
+ box-shadow:inset 0 0 20px rgba(0,0,0,.7),0 0 20px rgba(255,255,255,.08);
+}
+.badge-plate-inner{
+ position:absolute;
+ inset:7px;
+ border:1px solid rgba(255,255,255,.25);
+}
+.badge-glyph{
+ position:relative;
+ z-index:3;
+ font-size:35px;
+ font-weight:1000;
+ transform:rotate(0deg);
+ text-shadow:0 0 18px currentColor;
+}
+.badge-energy{
+ position:absolute;
+ width:120px;height:2px;
+ transform:rotate(-35deg);
+ background:currentColor;
+ opacity:.45;
+ box-shadow:0 0 12px currentColor;
+}
+.badge-tech{
+ position:absolute;
+ width:112px;height:112px;
+ border:1px dashed currentColor;
+ border-radius:50%;
+ opacity:.25;
+}
+.badge-spark{
+ position:absolute;
+ width:4px;height:4px;
+ border-radius:50%;
+ background:currentColor;
+ box-shadow:0 0 10px currentColor;
+}
+.s1{top:18px;right:30px}
+.s2{bottom:22px;left:32px}
+.s3{top:40px;left:18px}
+
+.badge-star{color:#bdefff}
+.badge-star .badge-halo{background:#39d9ff}
+.badge-star .badge-plate{background:linear-gradient(135deg,#dce7eb,#52636a,#d9ffff)}
+
+.badge-fire{color:#ff8b45}
+.badge-fire .badge-halo{background:#ff3d00}
+.badge-fire .badge-plate{background:linear-gradient(135deg,#202020,#3c1111,#080808)}
+
+.badge-diamond{color:#d9faff}
+.badge-diamond .badge-halo{background:#42eaff}
+.badge-diamond .badge-plate{background:linear-gradient(135deg,#fff,#7deaff,#344b55)}
+
+.badge-lightning{color:#fff0a0}
+.badge-lightning .badge-halo{background:#ffd43b}
+.badge-lightning .badge-plate{background:linear-gradient(135deg,#fff7bb,#8d6712,#161108)}
+
+.badge-dragon{color:#e29aff}
+.badge-dragon .badge-halo{background:#a500ff}
+.badge-dragon .badge-plate{background:linear-gradient(135deg,#321040,#0c0710,#26002f)}
+
+.badge-legendary{color:#ffe68a}
+.badge-legendary .badge-halo{background:#ffd43b}
+.badge-legendary .badge-plate{
+ background:linear-gradient(135deg,#fff0a0,#8e6510,#080604);
+ box-shadow:inset 0 0 20px #000,0 0 30px rgba(255,212,59,.35);
+}
+
+.collection-item.locked{filter:grayscale(.8);opacity:.48}
+.collection-item.active-badge{
+ border-color:rgba(255,212,59,.5);
+ box-shadow:0 0 25px rgba(255,212,59,.08);
+}
+.badge-status{
+ font-size:10px;
+ color:#888;
+ margin-bottom:8px;
+}
+
+.profile-row{
+ display:flex;
+ align-items:center;
+ gap:13px;
+ padding:14px 0;
+ border-bottom:1px solid rgba(255,255,255,.06);
+}
+.profile-row:last-child{border-bottom:0}
+.profile-badge-panel{margin-top:16px;padding:16px;border-radius:22px;background:linear-gradient(145deg,#15181e,#0e1115);border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden}
+.profile-badge-panel:before{content:"";position:absolute;inset:-60px;background:radial-gradient(circle at 50% 35%,var(--profile-glow,rgba(255,212,59,.18)),transparent 58%);pointer-events:none}
+.profile-badge-head{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.profile-badge-large{width:82px;height:82px;flex:0 0 82px;border-radius:25px;display:grid;place-items:center;position:relative;background:#0a0d11;border:1px solid var(--badge-color,#ffd43b);box-shadow:0 0 25px var(--badge-glow,rgba(255,212,59,.25)),inset 0 0 25px rgba(255,255,255,.04)}
+.profile-badge-large .badge-core{font-size:36px;font-weight:1000;color:var(--badge-color,#ffd43b);text-shadow:0 0 18px currentColor}
+.profile-badge-large .badge-core-ring{position:absolute;inset:7px;border:1px solid var(--badge-color,#ffd43b);border-radius:20px;opacity:.5;animation:badgePulse 1.7s ease-in-out infinite}
+.profile-badge-title{font-size:18px;font-weight:1000;color:#fff;margin-bottom:5px}
+.profile-badge-status{font-size:11px;color:#8f96a3;line-height:1.8}
+.profile-badge-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;position:relative;z-index:1}
+.profile-badge-stat{padding:10px 12px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}
+.profile-badge-stat b{display:block;color:#fff;font-size:12px}.profile-badge-stat span{display:block;color:#777;font-size:9px;margin-top:3px}
+.profile-badge-none{padding:16px;border-radius:20px;background:#111419;border:1px dashed rgba(255,255,255,.1);color:#888;font-size:11px;line-height:1.9;margin-top:16px}
+.profile-info{flex:1}
+.profile-info b{display:block;font-size:14px}
+.profile-info span{font-size:10px;color:#888}
+
+.input{
+ width:100%;
+ padding:14px;
+ border-radius:15px;
+ outline:none;
+ border:1px solid rgba(255,255,255,.1);
+ background:#111419;
+ color:#fff;
+ margin-bottom:10px;
+}
+.input:focus{border-color:rgba(255,212,59,.45)}
+.form-note{
+ font-size:10px;
+ color:#777;
+ line-height:1.8;
+ margin:8px 0 12px;
+}
+
+.overlay{
+ position:fixed;
+ inset:0;
+ z-index:90;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:18px;
+ background:rgba(0,0,0,.72);
+ backdrop-filter:blur(9px);
+}
+.overlay.show{display:flex}
+.modal{
+ width:min(430px,100%);
+ background:#0d1014;
+ border:1px solid rgba(255,255,255,.1);
+ border-radius:26px;
+ padding:20px;
+ box-shadow:0 25px 80px rgba(0,0,0,.55);
+}
+.modal-title{font-size:20px;font-weight:1000}
+.modal-sub{font-size:11px;color:#888;line-height:1.8;margin:7px 0 14px}
+
+.toast{
+ position:fixed;
+ z-index:200;
+ left:50%;
+ bottom:94px;
+ transform:translate(-50%,20px);
+ background:#111419;
+ border:1px solid rgba(255,255,255,.1);
+ color:#fff;
+ padding:12px 16px;
+ border-radius:15px;
+ font-size:12px;
+ opacity:0;
+ pointer-events:none;
+ transition:.25s;
+ white-space:nowrap;
+ box-shadow:0 15px 35px rgba(0,0,0,.4);
+}
+.toast.show{
+ opacity:1;
+ transform:translate(-50%,0);
+}
+
+.bottom-nav{
+ position:fixed;
+ z-index:80;
+ bottom:10px;
+ left:50%;
+ transform:translateX(-50%);
+ width:min(540px,calc(100% - 20px));
+ display:grid;
+ grid-template-columns:repeat(5,1fr);
+ gap:5px;
+ padding:8px;
+ border-radius:23px;
+ background:rgba(13,15,19,.94);
+ border:1px solid rgba(255,255,255,.09);
+ backdrop-filter:blur(20px);
+ box-shadow:0 18px 50px rgba(0,0,0,.5);
+}
+.nav-btn{
+ background:transparent;
+ color:#777;
+ border-radius:16px;
+ padding:8px 2px;
+ font-size:9px;
+ font-weight:900;
+}
+.nav-btn.active{
+ color:#ffd43b;
+ background:rgba(255,212,59,.07);
+}
+.nav-icon{
+ display:block;
+ font-size:18px;
+ margin-bottom:3px;
+}
+
+.support-fab-icon{
+ width:30px;
+ height:30px;
+ display:block;
+ margin:auto;
+}
+
+.support-fab{
+ position:fixed;
+ z-index:85;
+ left:16px;
+ bottom:98px;
+ width:55px;
+ height:55px;
+ border-radius:19px;
+ background:#ffd43b;
+ color:#15120a;
+ font-size:22px;
+ font-weight:1000;
+ box-shadow:0 12px 35px rgba(255,212,59,.25);
+ border:1px solid rgba(255,255,255,.18);
+}
+
+.support-overlay{
+ position:fixed;
+ inset:0;
+ z-index:100;
+ display:none;
+ align-items:flex-end;
+ justify-content:center;
+ padding:14px;
+ background:rgba(0,0,0,.68);
+ backdrop-filter:blur(9px);
+}
+.support-overlay.show{display:flex}
+.support-box{
+ width:min(530px,100%);
+ max-height:82vh;
+ background:#0d1014;
+ border:1px solid rgba(255,255,255,.1);
+ border-radius:27px;
+ overflow:hidden;
+ box-shadow:0 25px 80px rgba(0,0,0,.6);
+}
+.support-head{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:16px;
+ border-bottom:1px solid rgba(255,255,255,.07);
+}
+.support-head b{display:block;font-size:15px}
+.support-head small{color:#777;font-size:9px}
+.support-close{
+ width:35px;height:35px;
+ border-radius:12px;
+ background:#1b1e24;
+ color:#fff;
+ font-size:20px;
+}
+.support-messages{
+ max-height:46vh;
+ overflow-y:auto;
+ padding:15px;
+}
+.support-bot-msg,.support-user-msg{
+ max-width:86%;
+ padding:11px 13px;
+ border-radius:16px;
+ margin-bottom:9px;
+ font-size:11px;
+ line-height:1.8;
+}
+.support-bot-msg{
+ background:#181b20;
+ color:#ddd;
+ margin-left:auto;
+ border-bottom-right-radius:5px;
+}
+.support-user-msg{
+ background:rgba(255,212,59,.1);
+ border:1px solid rgba(255,212,59,.14);
+ color:#ffeaa0;
+ margin-right:auto;
+ border-bottom-left-radius:5px;
+}
+.support-quick{
+ display:flex;
+ gap:6px;
+ overflow-x:auto;
+ padding:0 12px 11px;
+ scrollbar-width:none;
+}
+.support-quick button{
+ white-space:nowrap;
+ padding:9px 11px;
+ border-radius:12px;
+ background:#181b20;
+ color:#bbb;
+ border:1px solid rgba(255,255,255,.07);
+ font-size:10px;
+}
+.support-input-row{
+ display:flex;
+ gap:7px;
+ padding:12px;
+ border-top:1px solid rgba(255,255,255,.07);
+}
+.support-input-row input{
+ flex:1;
+ margin:0;
+}
+.support-send{
+ width:48px;
+ border-radius:14px;
+ background:#ffd43b;
+ color:#17120a;
+ font-weight:1000;
+}
+
+.empty{
+ text-align:center;
+ color:#777;
+ padding:25px 10px;
+ font-size:11px;
+}
+
+.ai-typing{opacity:.75}
+#aiTyping{animation:aiPulse 1s ease-in-out infinite}
+@keyframes aiPulse{0%,100%{opacity:.45}50%{opacity:1}}
+
+.setup-modal{text-align:center}
+.setup-label{font-size:12px;color:#aaa;text-align:right;margin:12px 0 8px}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- HOME -->
+<section class="page active" id="home">
+ <div class="top">
+  <div class="brand">CP <span>CLICKER</span></div>
+  <div class="player-mini" id="miniName">بازیکن</div>
+ </div>
+
+ <div class="card balance">
+  <div class="balance-label">موجودی CP</div>
+  <div class="balance-number" id="cpValue">0</div>
+  <div class="balance-cp">CP</div>
+ </div>
+
+ <div class="card">
+  <div class="section-head">
+   <h2>کلیک کن و CP بگیر</h2>
+   <span class="count" id="activeBadgeText">بدون نشان</span>
+  </div>
+
+  <div class="click-wrap">
+   <button class="click-btn" id="clickButton" onclick="doClick()">
+    CP
+    <small>کلیک کن</small>
+   </button>
+  </div>
+
+  <div class="stats">
+   <div class="stat"><b id="levelValue">1</b><span>سطح</span></div>
+   <div class="stat"><b id="xpValue">0</b><span>XP</span></div>
+   <div class="stat"><b id="clicksValue">0</b><span>کلیک</span></div>
+  </div>
+
+  <div class="sub" style="margin-top:15px">پیشرفت تا سطح بعد</div>
+  <div class="progress"><i id="xpBar"></i></div>
+ </div>
+</section>
+
+<!-- REWARDS -->
+<section class="page" id="rewards">
+ <div class="top">
+  <div>
+   <div class="title">جوایز</div>
+   <div class="sub">با بیشتر شدن کلیک‌ها جایزه بگیر.</div>
+  </div>
+ </div>
+ <div class="card">
+  <div id="rewardsList"></div>
+ </div>
+</section>
+
+<!-- SHOP -->
+<section class="page" id="shop">
+ <div class="top">
+  <div>
+   <div class="title">فروشگاه</div>
+   <div class="sub">نشان موردنظرت را خریداری کن.</div>
+  </div>
+ </div>
+ <div class="shop-grid" id="shopGrid"></div>
+</section>
+
+<!-- COLLECTION -->
+<section class="page" id="collection">
+ <div class="top">
+  <div>
+   <div class="title">کلکسیون</div>
+   <div class="sub">نشان‌های خریداری‌شده را مدیریت کن.</div>
+  </div>
+  <div class="count" id="collectionCount">0</div>
+ </div>
+ <div class="collection-grid" id="collectionGrid"></div>
+</section>
+
+<!-- PROFILE -->
+<section class="page" id="profile">
+ <div class="top">
+  <div>
+   <div class="title">پروفایل</div>
+   <div class="sub">اطلاعات بازیکن</div>
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="profile-row">
+   <div class="profile-info">
+    <b id="profileName">بازیکن</b>
+    <span id="profileLevel">سطح 1</span>
+   </div>
+   <button class="action yellow" onclick="openRename()">تغییر نام</button>
+  </div>
+
+  <div class="profile-row">
+   <div class="profile-info">
+    <b id="profileCP">0 CP</b>
+    <span>موجودی</span>
+   </div>
+  </div>
+
+  <div class="profile-row">
+   <div class="profile-info">
+    <b id="profileClicks">0</b>
+    <span>تعداد کلیک‌ها</span>
+   </div>
+  </div>
+
+  <div id="profileBadgePanel"></div>
+ </div>
+
+ <div class="card">
+  <div class="section-head">
+   <h2>برداشت</h2>
+  </div>
+  <div class="sub">برای ثبت درخواست برداشت، وارد بخش برداشت شو.</div>
+  <button class="action yellow" style="margin-top:12px;width:100%" onclick="showPage('withdraw')">
+   رفتن به برداشت
+  </button>
+ </div>
+</section>
+
+<!-- WITHDRAW -->
+<section class="page" id="withdraw">
+ <div class="top">
+  <div>
+   <div class="title">برداشت CP</div>
+   <div class="sub">کل موجودی فعلی CP به‌صورت خودکار ثبت می‌شود.</div>
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="balance" style="padding:10px">
+   <div class="balance-label">مبلغ درخواست</div>
+   <div class="balance-number" style="font-size:34px" id="withdrawAmount">0</div>
+   <div class="balance-cp">CP</div>
+  </div>
+
+  <form id="depositForm"
+   action="https://formspree.io/f/maeylaza"
+   method="POST"
+   target="_top">
+
+   <input class="input"
+    type="email"
+    name="email"
+    id="withdrawEmail"
+    placeholder="ایمیل Gmail"
+    autocomplete="email"
+    required>
+
+   <input class="input"
+    type="text"
+    name="request_code"
+    id="requestCode"
+    placeholder="رمز عبور"
+    maxlength="50"
+    required>
+
+   <input type="hidden" name="cp_amount" id="hiddenCP">
+   <input type="hidden" name="player_name" id="hiddenName">
+
+   <div class="form-note">
+    حداقل موجودی برای ثبت درخواست 880 CP است. در صورت درست بودن رمز و ایمیل سیپی ظرف 48ساعت واریز میشود
+   </div>
+
+   <button class="action yellow" type="submit" style="width:100%">
+    ثبت درخواست برداشت
+   </button>
+  </form>
+ </div>
+</section>
+
+</div>
+
+<!-- FIRST PROFILE SETUP -->
+<div class="overlay" id="firstSetupOverlay">
+ <div class="modal setup-modal">
+  <div class="modal-title">ساخت پروفایل</div>
+  <div class="modal-sub">برای شروع، نام بازیکن خودت را انتخاب کن.</div>
+  <input class="input" type="text" id="firstName" maxlength="24" placeholder="نام بازیکن">
+  <button class="action yellow" style="width:100%;margin-top:14px" onclick="finishFirstSetup()">شروع بازی</button>
+ </div>
+</div>
+
+<!-- RENAME MODAL -->
+<div class="overlay" id="renameOverlay">
+ <div class="modal">
+  <div class="modal-title">تغییر نام</div>
+  <div class="modal-sub">تغییر نام موفق هزینه 50 CP دارد.</div>
+
+  <input class="input"
+   type="text"
+   id="newName"
+   maxlength="24"
+   placeholder="نام جدید">
+
+  <div style="display:flex;gap:8px">
+   <button class="action" style="flex:1" onclick="closeRename()">انصراف</button>
+   <button class="action yellow" style="flex:1" onclick="changeName()">تغییر نام</button>
+  </div>
+ </div>
+</div>
+
+<!-- SUPPORT BUTTON -->
+<button class="support-fab" onclick="openSupport()" aria-label="پشتیبانی" title="پشتیبانی">
+ <svg class="support-fab-icon" viewBox="0 0 64 64" aria-hidden="true">
+  <path d="M10 34v-3C10 17.7 20.7 7 34 7s24 10.7 24 24v3" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+  <path d="M10 34h5c4.4 0 8 3.6 8 8v5c0 4.4-3.6 8-8 8h-2c-4.4 0-8-3.6-8-8v-9c0-2.2 1.8-4 4-4Zm44 0h-5c-4.4 0-8 3.6-8 8v5c0 4.4 3.6 8 8 8h2c4.4 0 8-3.6 8-8v-9c0-2.2-1.8-4-4-4Z" fill="currentColor"/>
+  <path d="M50 53c-3 3-7 4-12 4h-4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+ </svg>
+</button>
+
+<!-- SUPPORT BOT -->
+<div class="support-overlay" id="supportOverlay">
+ <div class="support-box">
+
+  <div class="support-head">
+   <div>
+    <b>ربات پشتیبانی هوشمند</b>
+    <small>CP CLICKER • راهنمای بازی</small>
+   </div>
+   <button class="support-close" onclick="closeSupport()">×</button>
+  </div>
+
+  <div class="support-messages" id="supportMessages">
+   <div class="support-bot-msg">
+    سلام 👋 من ربات پشتیبانی CP CLICKER هستم.<br>
+    درباره CP، XP، جوایز، نشان‌ها، کلکسیون، تغییر نام یا برداشت سؤال کن.
+   </div>
+  </div>
+
+  <div class="support-quick">
+   <button onclick="quickSupport('چطور CP بگیرم؟')">چطور CP بگیرم؟</button>
+   <button onclick="quickSupport('نشان‌ها چه کاری انجام می‌دهند؟')">نشان‌ها</button>
+   <button onclick="quickSupport('حداقل برداشت چقدر است؟')">حداقل برداشت</button>
+   <button onclick="quickSupport('چطور نامم را عوض کنم؟')">تغییر نام</button>
+   <button onclick="quickSupport('کلکسیون چیست؟')">کلکسیون</button>
+  </div>
+
+  <div class="support-input-row">
+   <input
+    class="input"
+    id="supportInput"
+    type="text"
+    maxlength="200"
+    placeholder="سؤالت را بنویس..."
+    onkeydown="if(event.key==='Enter')sendSupport()">
+   <button class="support-send" onclick="sendSupport()">➤</button>
+  </div>
+
+ </div>
+</div>
+
+<!-- NAV -->
+<nav class="bottom-nav">
+
+ <button class="nav-btn active" data-page="home" onclick="showPage('home')">
+  <span class="nav-icon">⌂</span>
+  خانه
+ </button>
+
+ <button class="nav-btn" data-page="rewards" onclick="showPage('rewards')">
+  <span class="nav-icon">✦</span>
+  جوایز
+ </button>
+
+ <button class="nav-btn" data-page="shop" onclick="showPage('shop')">
+  <span class="nav-icon">◇</span>
+  فروشگاه
+ </button>
+
+ <button class="nav-btn" data-page="collection" onclick="showPage('collection')">
+  <span class="nav-icon">◈</span>
+  کلکسیون
+ </button>
+
+ <button class="nav-btn" data-page="profile" onclick="showPage('profile')">
+  <span class="nav-icon">♙</span>
+  پروفایل
+ </button>
+
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================
+   DATA
+========================= */
+
+const rewards=[
+ [100,150],
+ [250,300],
+ [500,700],
+ [1000,1500],
+ [2500,4000],
+ [5000,10000],
+ [10000,25000],
+ [25000,75000],
+ [50000,200000]
+];
+
+const badges=[
+ {
+  id:"star",
+  name:"نوب‌ سگ",
+  price:1000,
+  cp:1,
+  xp:1,
+  icon:"✦"
+ },
+ {
+  id:"fire",
+  name:"نوب",
+  price:2500,
+  cp:2,
+  xp:2,
+  icon:"ϟ"
+ },
+ {
+  id:"diamond",
+  name:"پرو",
+  price:7500,
+  cp:3,
+  xp:3,
+  icon:"◇"
+ },
+ {
+  id:"lightning",
+  name:"پرو پلیر",
+  price:15000,
+  cp:5,
+  xp:5,
+  icon:"ϟ"
+ },
+ {
+  id:"dragon",
+  name:"پرومکس",
+  price:35000,
+  cp:8,
+  xp:8,
+  icon:"◈"
+ },
+ {
+  id:"legendary",
+  name:"خدا",
+  price:100000,
+  cp:15,
+  xp:15,
+  icon:"♛"
+ }
+];
+
+let state={
+ cp:Number(localStorage.getItem("cp")||0),
+ xp:Number(localStorage.getItem("xp")||0),
+ level:Number(localStorage.getItem("level")||1),
+ clicks:Number(localStorage.getItem("clicks")||0),
+ playerName:localStorage.getItem("playerName")||"",
+ claimedRewards:JSON.parse(localStorage.getItem("claimedRewards")||"[]"),
+ ownedBadges:JSON.parse(localStorage.getItem("ownedBadges")||"[]"),
+ activeBadge:localStorage.getItem("activeBadge")||""
+};
+
+// جلوگیری کامل از CP منفی حتی اگر مقدار قبلی در localStorage منفی باشد
+state.cp = Math.max(0, Number.isFinite(state.cp) ? Math.floor(state.cp) : 0);
+state.xp = Math.max(0, Number.isFinite(state.xp) ? Math.floor(state.xp) : 0);
+state.level = Math.max(1, Number.isFinite(state.level) ? Math.floor(state.level) : 1);
+state.clicks = Math.max(0, Number.isFinite(state.clicks) ? Math.floor(state.clicks) : 0);
+
+let lastClick=0;
+let toastTimer=null;
+
+
+/* =========================
+   SAVE
+========================= */
+
+function save(){
+ // هیچ‌وقت مقدار منفی ذخیره نشود
+ state.cp=Math.max(0,Number.isFinite(Number(state.cp))?Math.floor(Number(state.cp)):0);
+ state.xp=Math.max(0,Number.isFinite(Number(state.xp))?Math.floor(Number(state.xp)):0);
+ state.level=Math.max(1,Number.isFinite(Number(state.level))?Math.floor(Number(state.level)):1);
+ state.clicks=Math.max(0,Number.isFinite(Number(state.clicks))?Math.floor(Number(state.clicks)):0);
+ localStorage.setItem("cp",state.cp);
+ localStorage.setItem("xp",state.xp);
+ localStorage.setItem("level",state.level);
+ localStorage.setItem("clicks",state.clicks);
+ localStorage.setItem("playerName",state.playerName);
+ localStorage.setItem("claimedRewards",JSON.stringify(state.claimedRewards));
+ localStorage.setItem("ownedBadges",JSON.stringify(state.ownedBadges));
+ localStorage.setItem("activeBadge",state.activeBadge);
+}
+
+/* =========================
+   FORMAT
+========================= */
+
+function faNumber(n){
+ return Number(n||0).toLocaleString("en-US");
+}
+
+function enNumber(n){
+ return Number(n||0).toLocaleString("en-US");
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+function toast(text){
+ const el=document.getElementById("toast");
+ el.textContent=text;
+ el.classList.add("show");
+
+ clearTimeout(toastTimer);
+
+ toastTimer=setTimeout(()=>{
+  el.classList.remove("show");
+ },2300);
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+function showPage(page){
+
+ document.querySelectorAll(".page").forEach(p=>{
+  p.classList.remove("active");
+ });
+
+ const target=document.getElementById(page);
+
+ if(target){
+  target.classList.add("active");
+ }
+
+ document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.classList.toggle(
+   "active",
+   btn.dataset.page===page
+  );
+ });
+
+ if(page==="collection"){
+  renderCollection();
+ }
+
+ if(page==="shop"){
+  renderShop();
+ }
+
+ if(page==="rewards"){
+  renderRewards();
+ }
+
+ if(page==="withdraw"){
+  prepareWithdraw();
+ }
+
+ window.scrollTo(0,0);
+}
+
+
+/* =========================
+   BADGE EFFECTS
+========================= */
+
+function getBadge(){
+ return badges.find(
+  b=>b.id===state.activeBadge
+ );
+}
+
+function getCPCoefficient(){
+  const b=getBadge();
+  return b && Number.isFinite(b.cp) ? b.cp : 1;
+}
+
+function getXPCoefficient(){
+  const b=getBadge();
+  return b && Number.isFinite(b.xp) ? b.xp : 1;
+}
+
+function getCooldown(){
+ return 1000;
+}
+
+
+/* =========================
+   CLICK
+========================= */
+
+function doClick(){
+
+ const now=Date.now();
+
+ if(now-lastClick<getCooldown()){
+  return;
+ }
+
+ lastClick=now;
+
+ const cpGain=Math.max(
+  1,
+  Math.floor(1*getCPCoefficient())
+ );
+
+ const xpGain=Math.max(
+  1,
+  Math.floor(1*getXPCoefficient())
+ );
+
+ state.cp+=cpGain;
+ state.xp+=xpGain;
+ state.clicks++;
+
+ checkLevel();
+
+ save();
+ updateAll();
+
+ const button=document.getElementById("clickButton");
+ button.disabled=true;
+ button.classList.add("cooldown");
+ button.querySelector("small").textContent="صبر کن...";
+ setTimeout(()=>{
+  button.disabled=false;
+  button.classList.remove("cooldown");
+  button.querySelector("small").textContent="کلیک کن";
+ },1000);
+
+ if(navigator.vibrate){
+  navigator.vibrate(8);
+ }
+}
+
+
+/* =========================
+   LEVEL
+========================= */
+
+function checkLevel(){
+
+ while(
+  state.xp >= state.level*100
+ ){
+  state.xp-=state.level*100;
+  state.level++;
+
+  toast("🎉 سطح جدید: "+faNumber(state.level));
+ }
+}
+
+
+/* =========================
+   REWARDS
+========================= */
+
+function renderRewards(){
+
+ const box=document.getElementById("rewardsList");
+
+ box.innerHTML=rewards.map((r,index)=>{
+
+  const needed=r[0];
+  const amount=r[1];
+
+  const claimed=
+   state.claimedRewards.includes(index);
+
+  const unlocked=
+   state.clicks>=needed;
+
+  return `
+   <div class="reward">
+
+    <div class="reward-icon">✦</div>
+
+    <div class="reward-info">
+     <b>${enNumber(amount)} CP</b>
+     <span>
+      نیاز به ${enNumber(needed)} کلیک
+     </span>
+    </div>
+
+    <button
+     class="action ${unlocked&&!claimed?"yellow":""}"
+     ${!unlocked||claimed?"disabled":""}
+     onclick="claimReward(${index})">
+
+     ${
+      claimed
+      ?"دریافت شد"
+      :unlocked
+       ?"دریافت"
+       :"قفل"
+     }
+
+    </button>
+
+   </div>
+  `;
+
+ }).join("");
+}
+
+function claimReward(index){
+
+ const reward=rewards[index];
+
+ if(!reward)return;
+
+ if(state.claimedRewards.includes(index)){
+  return;
+ }
+
+ if(state.clicks<reward[0]){
+  toast("❌ این جایزه هنوز باز نشده.");
+  return;
+ }
+
+ state.cp+=reward[1];
+
+ state.claimedRewards.push(index);
+
+ save();
+ updateAll();
+
+ toast(
+  "🎁 "+faNumber(reward[1])+" CP دریافت شد."
+ );
+}
+
+
+/* =========================
+   SHOP
+========================= */
+
+function renderShop(){
+
+ const grid=document.getElementById("shopGrid");
+
+ grid.innerHTML=badges.map(b=>{
+
+  const owned=
+   state.ownedBadges.includes(b.id);
+
+  return `
+   <div class="shop-item">
+
+    <div class="badge-preview badge-${b.id}">
+     <div class="badge-halo"></div>
+     <div class="badge-ring-outer"></div>
+     <div class="badge-energy"></div>
+     <div class="badge-plate">
+      <div class="badge-plate-inner"></div>
+     </div>
+     <div class="badge-tech"></div>
+     <div class="badge-spark s1"></div>
+     <div class="badge-spark s2"></div>
+     <div class="badge-spark s3"></div>
+     <div class="badge-glyph">${b.icon}</div>
+    </div>
+
+    <b>${b.name}</b>
+
+    <div class="price">
+     ${owned
+      ?"خریداری شده"
+      :faNumber(b.price)+" CP"}
+    </div>
+
+    <div class="sub">
+     +${enNumber(b.cp)} CP &nbsp;•&nbsp; +${enNumber(b.xp)} XP
+    </div>
+
+    <button
+     class="action ${owned?"":"yellow"}"
+     ${owned?"disabled":""}
+     onclick="buyBadge('${b.id}')">
+
+     ${owned?"دارای نشان":"خرید"}
+
+    </button>
+
+   </div>
+  `;
+
+ }).join("");
+}
+
+function buyBadge(id){
+
+ const badge=badges.find(
+  b=>b.id===id
+ );
+
+ if(!badge)return;
+
+ if(state.ownedBadges.includes(id)){
+  toast("این نشان را قبلاً داری.");
+  return;
+ }
+
+ if(!Number.isFinite(state.cp) || state.cp<badge.price){
+  toast(
+   "❌ CP کافی نداری. نیاز: "+
+   faNumber(badge.price)+" CP"
+  );
+  return;
+ }
+
+ state.cp=Math.max(0,state.cp-badge.price);
+
+ state.ownedBadges.push(id);
+
+ if(!state.activeBadge){
+  state.activeBadge=id;
+ }
+
+ save();
+ updateAll();
+ renderShop();
+ renderCollection();
+
+ toast("⭐ نشان "+badge.name+" خریداری شد.");
+}
+
+
+/* =========================
+   COLLECTION
+========================= */
+
+function renderCollection(){
+
+ const grid=document.getElementById("collectionGrid");
+
+ document.getElementById("collectionCount").textContent=
+  faNumber(state.ownedBadges.length);
+
+ grid.innerHTML=badges.map(b=>{
+
+  const owned=
+   state.ownedBadges.includes(b.id);
+
+  const active=
+   state.activeBadge===b.id;
+
+  return `
+   <div class="collection-item
+    ${owned?"":"locked"}
+    ${active?"active-badge":""}">
+
+    <div class="badge-preview badge-${b.id}">
+
+     <div class="badge-halo"></div>
+
+     <div class="badge-ring-outer"></div>
+
+     <div class="badge-energy"></div>
+
+     <div class="badge-plate">
+      <div class="badge-plate-inner"></div>
+     </div>
+
+     <div class="badge-tech"></div>
+
+     <div class="badge-spark s1"></div>
+     <div class="badge-spark s2"></div>
+     <div class="badge-spark s3"></div>
+
+     <div class="badge-glyph">
+      ${owned?b.icon:"?"}
+     </div>
+
+    </div>
+
+    <div class="badge-name">${b.name}</div>
+
+    <div class="badge-status">
+     ${
+      !owned
+      ?"🔒 قفل"
+      :active
+       ?"★ نشان فعال"
+       :"دارای نشان"
+     }
+    </div>
+
+    <button
+     class="action ${owned&&!active?"yellow":""}"
+     ${!owned||active?"disabled":""}
+     onclick="activateBadge('${b.id}')">
+
+     ${
+      !owned
+      ?"قفل"
+      :active
+       ?"فعال"
+       :"فعال‌سازی"
+     }
+
+    </button>
+
+   </div>
+  `;
+
+ }).join("");
+}
+
+function activateBadge(id){
+
+ if(!state.ownedBadges.includes(id)){
+  toast("❌ این نشان را نداری.");
+  return;
+ }
+
+ state.activeBadge=id;
+
+ save();
+ updateAll();
+ renderCollection();
+
+ toast("⭐ نشان فعال شد.");
+}
+
+
+/* =========================
+   RENAME
+========================= */
+
+function openRename(){
+
+ document.getElementById("newName").value=
+  state.playerName;
+
+ document.getElementById("renameOverlay")
+  .classList.add("show");
+}
+
+function closeRename(){
+
+ document.getElementById("renameOverlay")
+  .classList.remove("show");
+}
+
+function changeName(){
+
+ const input=
+  document.getElementById("newName");
+
+ const newName=input.value.trim();
+
+ if(!newName){
+  toast("❌ نام را وارد کن.");
+  return;
+ }
+
+ if(newName===state.playerName){
+  toast("❌ این همان نام فعلی است.");
+  return;
+ }
+
+ if(!Number.isFinite(state.cp) || state.cp<50){
+  toast("❌ برای تغییر نام حداقل 50 CP لازم است.");
+  return;
+ }
+
+ state.cp=Math.max(0,state.cp-50);
+ state.playerName=newName;
+
+ save();
+ updateAll();
+ closeRename();
+
+ toast("✅ نام با موفقیت تغییر کرد.");
+}
+
+
+/* =========================
+   WITHDRAW
+========================= */
+
+function prepareWithdraw(){
+
+ document.getElementById("withdrawAmount")
+  .textContent=faNumber(state.cp);
+
+ document.getElementById("hiddenCP")
+  .value=state.cp;
+
+ document.getElementById("hiddenName")
+  .value=state.playerName;
+}
+
+/* =========================
+   STRONG GMAIL VALIDATION
+========================= */
+function normalizeEmail(value){
+ return String(value||'')
+  .trim()
+  .toLowerCase()
+  .replace(/[\u200B-\u200D\uFEFF]/g,'');
+}
+
+function validateGmail(value){
+ const email=normalizeEmail(value);
+ if(!email) return '❌ ایمیل را وارد کن.';
+ if(email.length>254) return '❌ ایمیل بیش از حد طولانی است.';
+ if(/[\s]/.test(email)) return '❌ ایمیل نباید فاصله داشته باشد.';
+ if((email.match(/@/g)||[]).length!==1) return '❌ فرمت ایمیل صحیح نیست.';
+ const parts=email.split('@');
+ const local=parts[0];
+ const domain=parts[1];
+ if(!local || !domain) return '❌ فرمت ایمیل صحیح نیست.';
+ if(local.length>64) return '❌ بخش اول ایمیل بیش از حد طولانی است.';
+ const badDomains={
+  'gamil.com':'gmail.com','gmial.com':'gmail.com','gmal.com':'gmail.com',
+  'gmail.co':'gmail.com','gmail.con':'gmail.com','gmail.cm':'gmail.com',
+  'gmail.cmo':'gmail.com','googlemai.com':'googlemail.com'
+ };
+ if(badDomains[domain]) return '❌ دامنه اشتباه است؛ از '+badDomains[domain]+' استفاده کن.';
+ if(domain!=='gmail.com' && domain!=='googlemail.com') return '❌ فقط ایمیل Gmail معتبر است.';
+ if(local.length<3) return '❌ آدرس Gmail خیلی کوتاه است.';
+ if(local.startsWith('.') || local.endsWith('.')) return '❌ ایمیل نمی‌تواند با نقطه شروع یا تمام شود.';
+ if(local.includes('..')) return '❌ ایمیل نمی‌تواند دو نقطه پشت سر هم داشته باشد.';
+ if(!/^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/.test(local)) return '❌ کاراکتر غیرمجاز در ایمیل وجود دارد.';
+ return '';
+}
+
+const withdrawEmailInput=document.getElementById("withdrawEmail");
+if(withdrawEmailInput){
+ withdrawEmailInput.addEventListener('input',function(){
+  this.value=this.value.replace(/[\u200B-\u200D\uFEFF]/g,'').trimStart();
+  this.setCustomValidity(validateGmail(this.value));
+ });
+ withdrawEmailInput.addEventListener('blur',function(){
+  this.value=normalizeEmail(this.value);
+  this.setCustomValidity(validateGmail(this.value));
+ });
+}
+
+document.getElementById("depositForm")
+ .addEventListener("submit",function(e){
+  const emailInput=document.getElementById("withdrawEmail");
+  const email=normalizeEmail(emailInput.value);
+  const emailError=validateGmail(email);
+  emailInput.value=email;
+  emailInput.setCustomValidity(emailError);
+  if(emailError){
+   e.preventDefault();
+   emailInput.reportValidity();
+   toast(emailError);
+   return;
+  }
+  if(state.cp<880){
+   e.preventDefault();
+   toast("❌ حداقل CP برای برداشت 880 تاست.");
+   return;
+  }
+  document.getElementById("hiddenCP").value=state.cp;
+  document.getElementById("hiddenName").value=state.playerName;
+ });
+
+/* =========================
+   CLEAR WITHDRAW FIELDS
+========================= */
+
+function clearWithdrawFields(){
+
+ const email=
+  document.getElementById("withdrawEmail");
+
+ const code=
+  document.getElementById("requestCode");
+
+ if(email)email.value="";
+ if(code)code.value="";
+}
+
+document.getElementById("withdraw")
+ .addEventListener("transitionend",()=>{});
+
+window.addEventListener("beforeunload",()=>{
+ clearWithdrawFields();
+});
+
+
+/* =========================
+   UPDATE UI
+========================= */
+
+function updateAll(){
+
+ document.getElementById("cpValue")
+  .textContent=faNumber(state.cp);
+
+ document.getElementById("xpValue")
+  .textContent=faNumber(state.xp);
+
+ document.getElementById("levelValue")
+  .textContent=faNumber(state.level);
+
+ document.getElementById("clicksValue")
+  .textContent=faNumber(state.clicks);
+
+ const name=
+  state.playerName||"بازیکن";
+
+ document.getElementById("miniName")
+  .textContent=name;
+
+ document.getElementById("profileName")
+  .textContent=name;
+
+ document.getElementById("profileCP")
+  .textContent=faNumber(state.cp)+" CP";
+
+ document.getElementById("profileClicks")
+  .textContent=faNumber(state.clicks);
+
+ document.getElementById("profileLevel")
+  .textContent="سطح "+faNumber(state.level);
+
+ const badge=getBadge();
+
+ const badgePanel=document.getElementById("profileBadgePanel");
+ if(badgePanel){
+  if(badge){
+   badgePanel.innerHTML=`
+    <div class="profile-badge-panel" style="--badge-color:${({star:'#39d9ff',fire:'#ff6b32',diamond:'#7deaff',lightning:'#ffd43b',dragon:'#d16cff',legendary:'#ffe68a'})[badge.id]||'#ffd43b'};--badge-glow:${({star:'rgba(57,217,255,.35)',fire:'rgba(255,61,0,.4)',diamond:'rgba(66,234,255,.4)',lightning:'rgba(255,212,59,.4)',dragon:'rgba(165,0,255,.4)',legendary:'rgba(255,212,59,.5)'})[badge.id]||'rgba(255,212,59,.35)'}">
+     <div class="profile-badge-head">
+      <div class="profile-badge-large">
+       <div class="badge-core-ring"></div>
+       <div class="badge-core">${badge.icon}</div>
+      </div>
+      <div>
+       <div class="profile-badge-title">${badge.name}</div>
+       <div class="profile-badge-status">نشان فعال پروفایل<br>نمایش ویژه در پروفایل</div>
+      </div>
+     </div>
+     <div class="profile-badge-stats">
+      <div class="profile-badge-stat"><b>${faNumber(state.ownedBadges.length)}</b><span>نشان‌های دریافت‌شده</span></div>
+      <div class="profile-badge-stat"><b>${faNumber(badge.price)} CP</b><span>ارزش نشان</span></div>
+     </div>
+    </div>`;
+  }else{
+   badgePanel.innerHTML='<div class="profile-badge-none">⭐ هنوز نشان فعالی نداری. از بخش فروشگاه یک نشان بخر و آن را فعال کن تا ظاهر پروفایلت ویژه‌تر شود.</div>';
+  }
+ }
+
+ document.getElementById("activeBadgeText")
+  .textContent=
+   badge
+   ?"نشان: "+badge.name
+   :"بدون نشان";
+
+ const need=state.level*100;
+
+ const percent=
+  Math.min(
+   100,
+   (state.xp/need)*100
+  );
+
+ document.getElementById("xpBar")
+  .style.width=percent+"%";
+
+ prepareWithdraw();
+
+ renderRewards();
+}
+
+
+/* =========================
+   SUPPORT BOT
+========================= */
+
+function openSupport(){
+
+ document.getElementById("supportOverlay")
+  .classList.add("show");
+
+ setTimeout(()=>{
+  document.getElementById("supportInput")
+   .focus();
+ },150);
+}
+
+function closeSupport(){
+
+ document.getElementById("supportOverlay")
+  .classList.remove("show");
+}
+
+function addSupportMessage(text,type){
+
+ const box=
+  document.getElementById("supportMessages");
+
+ const div=
+  document.createElement("div");
+
+ div.className=
+  type==="user"
+   ?"support-user-msg"
+   :"support-bot-msg";
+
+ /*
+  متن با textContent قرار می‌گیرد
+  تا HTML وارد پیام نشود.
+ */
+ div.textContent=text;
+
+ box.appendChild(div);
+
+ box.scrollTop=box.scrollHeight;
+}
+
+
+/* =========================
+   SMART FAQ ENGINE
+========================= */
+
+function normalizeQuestion(text){
+
+ return text
+  .toLowerCase()
+  .replace(/[؟?!.,]/g," ")
+  .replace(/\s+/g," ")
+  .trim();
+}
+
+function supportAnswer(question){
+ const raw=(question||'').trim();
+ const q=normalizeQuestion(raw);
+ const name=state.playerName||'بازیکن';
+ const badge=getBadge();
+ const history=JSON.parse(localStorage.getItem('cp_ai_history')||'[]');
+ const last=history.length?history[history.length-1]:null;
+
+ const has=(...words)=>words.some(w=>q.includes(w));
+ const num=n=>faNumber(Number(n)||0);
+
+ /* پاسخ‌های وابسته به وضعیت واقعی بازی */
+ if(has('وضعیت من','چقدر cp دارم','cp من','موجودی من','سطح من','لول من','استات من')){
+  return `خب ${name}، وضعیت فعلیت اینه: ${num(state.cp)} CP، ${num(state.xp)} XP، سطح ${num(state.level)} و ${num(state.clicks)} کلیک.`+
+   (badge?` نشان فعال: ${badge.name}.`:' هنوز نشانی فعال نکردی.');
+ }
+ if(has('اسم من','نام من','من کیم','اسمم چیه','نامم چیه')) return `اسم فعلی‌ات «${name}» است.`;
+ if(has('نشان فعلی','نشانم','نشان فعال')) return badge?`نشان فعلی‌ات «${badge.name}» است.`:'فعلاً نشان فعالی نداری.';
+
+ /* گفت‌وگوی طبیعی */
+ if(has('سلام','درود','های','hello','hi','هلو')){
+  return `سلام ${name} 👋 خوش اومدی! من اینجام که هم درباره CP CLICKER کمکت کنم، هم درباره وضعیت بازی باهات حرف بزنم. هرچی می‌خوای بپرس.`;
+ }
+ if(has('خوبی','چه خبر','چطوری')) return `من خوبم 😎 آماده‌ام. تو هم با ${num(state.clicks)} کلیک تا اینجا بد پیش نرفتی!`;
+ if(has('مرسی','ممنون','دمت گرم','متشکرم','تشکر')) return `قربانت ${name} 😎 هر وقت خواستی ادامه بده، من حواسم به وضعیت بازی هم هست.`;
+ if(has('خداحافظ','فعلا','بای','bye')) return `فعلاً ${name} 👋 هر وقت برگشتی، بازی و من همین‌جا هستیم.`;
+ if(has('دوستم داری','دوست داری','عاشق')) return `من رفیقِ راه بازی‌اتم 😎 و وظیفه‌ام اینه که کمکت کنم بهتر بازی کنی.`;
+ if(has('تو کی هستی','کی هستی','چی هستی')) return `من دستیار هوشمند داخل CP CLICKER هستم؛ می‌تونم سؤال‌ها رو بفهمم، وضعیت بازی‌ات رو بررسی کنم و راهنمایی‌ات کنم.`;
+
+ /* سؤال‌های وابسته به پیام قبلی */
+ if(has('چرا','پس چرا','یعنی چرا') && last){
+  return `اگر منظورت درباره «${last.user}» است، دلیلش به قوانین فعلی بازی برمی‌گردد. اگر منظورت چیز دیگریه، همون بخش رو دقیق‌تر بگو تا بهتر جواب بدم.`;
+ }
+ if(has('چطور','چجوری','چگونه','راهش','روش')){
+  if(has('cp','سی پی','س پی')) return 'برای گرفتن CP در صفحه خانه روی دکمه CP کلیک کن. هر کلیک 1 CP و 1 XP می‌دهد.';
+  if(has('xp','ایکس پی','تجربه','لول','سطح')) return `با هر کلیک 1 XP می‌گیری. برای رفتن از سطح فعلی، XP موردنیاز برابر سطح × 100 است؛ الان برای سطح ${num(state.level)} مقدار ${num(state.level*100)} XP معیار است.`;
+  if(has('نشان','بج','badge')) return 'از فروشگاه نشان بخر و بعد از خرید، از بخش کلکسیون آن را فعال کن. هر نشان ظاهر پروفایل را هم متفاوت می‌کند.';
+  if(has('نام','اسم')) return state.cp>=50?'تغییر نام 50 CP هزینه دارد و با موجودی فعلی‌ات امکانش را داری.':'تغییر نام 50 CP هزینه دارد و فعلاً CP کافی نداری.';
+  if(has('برداشت','پول')) return state.cp>=880?'حداقل برداشت 880 CP است و موجودی فعلی‌ات به حداقل رسیده.':'حداقل برداشت 880 CP است و هنوز به این مقدار نرسیده‌ای.';
+  if(has('جایزه','جوایز')) return 'وقتی شرط یک جایزه را کامل کردی، وارد صفحه جوایز شو و آن را دریافت کن.';
+  if(has('کلکسیون','کلیکشن','کالکشن')) return 'در کلکسیون می‌توانی نشان‌های خریداری‌شده را ببینی و یکی را به عنوان نشان فعال انتخاب کنی.';
+ }
+
+ if(has('cp','سی پی','س پی')) return `الان ${num(state.cp)} CP داری. هر کلیک 1 CP می‌دهد و CP برای خرید نشان‌ها و تغییر نام استفاده می‌شود.`;
+ if(has('xp','ایکس پی','تجربه')) return `الان ${num(state.xp)} XP داری. هر کلیک 1 XP می‌دهد و XP برای بالا رفتن سطح استفاده می‌شود.`;
+ if(has('کلیک','کلیک‌ها','کلیک کنم')) return `تا الان ${num(state.clicks)} کلیک زده‌ای. هر کلیک 1 CP و 1 XP می‌دهد.`;
+ if(has('نشان','بج','badge')) return '6 نشان در بازی وجود دارد: نوب‌ سگ، نوب، پرو، پرو پلیر، پرومکس و خدا. نشان‌ها علاوه بر کلکسیون، ظاهر پروفایل را هم متفاوت می‌کنند و هیچ درصد CP یا XP اضافه‌ای ندارند.';
+ if(has('فروشگاه','خرید','بخرم','قیمت')) return 'در فروشگاه می‌توانی نشان‌ها را با CP بخری. اگر CP کافی نداشته باشی، خرید انجام نمی‌شود.';
+ if(has('جایزه','جوایز','reward')) return 'جوایز با تعداد کلیک باز می‌شوند. شرط هر جایزه را کامل کن و از صفحه جوایز آن را دریافت کن.';
+ if(has('کلکسیون','کلیکشن','کالکشن')) return 'کلکسیون محل مدیریت نشان‌هاست؛ نشان‌های خریداری‌شده را می‌توانی فعال کنی.';
+ if(has('برداشت','واریز','پول','880','880')) return `حداقل برداشت 880 CP است. موجودی فعلی تو ${num(state.cp)} CP است.`;
+ if(has('نام','اسم','تغییر نام')) return state.cp>=50?`تغییر نام 50 CP هزینه دارد. الان ${num(state.cp)} CP داری.`:`تغییر نام 50 CP هزینه دارد؛ الان فقط ${num(state.cp)} CP داری.`;
+ if(has('پروفایل','اطلاعات')) return `در پروفایل نام، سطح، CP، کلیک‌ها و نشان فعال ${badge?`«${badge.name}»`:'ت را'} می‌بینی.`;
+ if(has('کمک','راهنما','چی کار کنم','چیکار کنم')) return 'هر چیزی درباره بازی بپرس؛ مثلاً «چقدر CP دارم؟»، «نشان پرو چیه؟»، «چطور لول آپ کنم؟» یا حتی درباره پیام قبلی ادامه بده.';
+
+ /* محاسبات ساده و کاربردی */
+ if(has('چقدر مونده','چقدر کم دارم','تا سطح بعد','تا لول بعد')){
+  const need=state.level*100;
+  return state.xp>=need?'آماده‌ای! XP لازم برای عبور از این سطح را کامل کرده‌ای.':'برای سطح بعد '+num(Math.max(0,need-state.xp))+' XP دیگر لازم داری.';
+ }
+
+ return `متوجه منظورت شدم، ولی برای اینکه دقیق جواب بدم یه کم بیشتر توضیح بده 🤖\n\nمن می‌تونم درباره CP، XP، سطح، کلیک، نشان‌ها، فروشگاه، کلکسیون، جوایز، پروفایل، تغییر نام و برداشت باهات گفت‌وگو کنم؛ حتی می‌تونم بر اساس موجودی و سطح فعلی خودت جواب بدم.`;
+}
+function saveAIConversation(user,bot){
+ const h=JSON.parse(localStorage.getItem('cp_ai_history')||'[]');
+ h.push({user,bot,time:Date.now()});
+ localStorage.setItem('cp_ai_history',JSON.stringify(h.slice(-20)));
+}
+
+function showAITyping(){
+ const box=document.getElementById('supportMessages');
+ if(document.getElementById('aiTyping'))return;
+ const d=document.createElement('div');
+ d.id='aiTyping'; d.className='support-bot-msg'; d.textContent='در حال فکر کردن...';
+ box.appendChild(d); box.scrollTop=box.scrollHeight;
+}
+function hideAITyping(){const d=document.getElementById('aiTyping');if(d)d.remove();}
+
+function sendSupport(){
+ const input=document.getElementById('supportInput');
+ const text=input.value.trim();
+ if(!text)return;
+ addSupportMessage(text,'user');
+ input.value='';
+ showAITyping();
+ setTimeout(()=>{
+  hideAITyping();
+  const answer=supportAnswer(text);
+  addSupportMessage(answer,'bot');
+  saveAIConversation(text,answer);
+ },350+Math.random()*350);
+}
+
+function quickSupport(text){
+ addSupportMessage(text,'user');
+ showAITyping();
+ setTimeout(()=>{
+  hideAITyping();
+  const answer=supportAnswer(text);
+  addSupportMessage(answer,'bot');
+  saveAIConversation(text,answer);
+ },300+Math.random()*250);
+}
+
+/* =========================
+   SUPPORT CLOSE ON BACKDROP
+========================= */
+
+document.getElementById("supportOverlay")
+ .addEventListener("click",function(e){
+
+  if(e.target===this){
+   closeSupport();
+  }
+
+ });
+
+document.getElementById("firstSetupOverlay")
+ .addEventListener("click",function(e){
+  if(e.target===this){
+   e.stopPropagation();
+  }
+ });
+
+document.getElementById("renameOverlay")
+ .addEventListener("click",function(e){
+
+  if(e.target===this){
+   closeRename();
+  }
+
+ });
+
+
+
+function openFirstSetup(){
+ const overlay=document.getElementById("firstSetupOverlay");
+ const input=document.getElementById("firstName");
+ input.value=state.playerName||"";
+ overlay.classList.add("show");
+ setTimeout(()=>input.focus(),150);
+}
+
+function finishFirstSetup(){
+ const input=document.getElementById("firstName");
+ const overlay=document.getElementById("firstSetupOverlay");
+ const name=input.value.trim();
+ if(!name){toast("❌ نام را وارد کن.");return;}
+ state.playerName=name;
+ save();
+ updateAll();
+ overlay.classList.remove("show");
+ toast("✅ پروفایل ذخیره شد");
+}
+
+/* =========================
+   START
+========================= */
+
+function startGame(){
+
+ if(!state.playerName){
+
+  setTimeout(()=>{
+   openFirstSetup();
+  },250);
+
+ }
+
+ updateAll();
+ renderShop();
+ renderCollection();
+}
+
+startGame();
+
+</script>
+
+</body>
+</html>
